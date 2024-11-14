@@ -22,6 +22,8 @@ struct Rule {
     UDP   = 17,
   };
 
+  // Zero means any
+
   in_addr_t dst_ip = 0;
   in_port_t dst_port = 0;
   
@@ -31,6 +33,8 @@ struct Rule {
   Protocol protocol = Protocol::ANY;
 
   bool Match(const char* package) const;
+
+  void Dump() const;
 };
 
 // ============================================================================
@@ -48,6 +52,9 @@ class List {
 
   /// Returns true if list is white. 
   bool IsWhite() const;
+
+  /// Prints list to stdout.
+  void Dump() const;
 
  private:
   std::vector<Rule> rules_;
