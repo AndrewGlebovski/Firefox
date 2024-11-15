@@ -34,10 +34,12 @@ void PrintPackage(const char* package) {
   size_t offset = sizeof(ether_header);
   auto ip_hdr = reinterpret_cast<const iphdr*>(package + offset);
 
+  offset += ip_hdr->ihl << 2;
+
   if (ip_hdr->protocol == int(Rule::Protocol::TCP)) {
     auto tcp_hdr = reinterpret_cast<const tcphdr*>(package + offset);
 
-    printf("Received TCP package from ");
+    printf("TCP package from ");
     PrintIp(ip_hdr->saddr);
     putchar(':');
     PrintPort(tcp_hdr->source);
@@ -45,11 +47,11 @@ void PrintPackage(const char* package) {
     PrintIp(ip_hdr->daddr);
     putchar(':');
     PrintPort(tcp_hdr->dest);
-    printf(". ");
+    printf(".");
   } else if (ip_hdr->protocol == int(Rule::Protocol::UDP)) {
     auto udp_hdr = reinterpret_cast<const udphdr*>(package + offset);
 
-    printf("Received UDP package from ");
+    printf("UDP package from ");
     PrintIp(ip_hdr->saddr);
     putchar(':');
     PrintPort(udp_hdr->source);
@@ -57,13 +59,13 @@ void PrintPackage(const char* package) {
     PrintIp(ip_hdr->daddr);
     putchar(':');
     PrintPort(udp_hdr->dest);
-    printf(". ");
+    printf(".");
   } else if (ip_hdr->protocol == int(Rule::Protocol::ICMP)) {
-    printf("Received ICMP package from ");
+    printf("ICMP package from ");
     PrintIp(ip_hdr->saddr);
     printf(" to ");
     PrintIp(ip_hdr->daddr);
-    printf(". ");
+    printf(".");
   }
 }
 
@@ -103,11 +105,11 @@ bool Filter(int in, int out, const List& list) {
     bool match = (list.Match(buffer) != nullptr);
 
     if ((list.IsWhite() && !match) || (!list.IsWhite() && match)) {
-      printf("Packaged dropped.\n");
+      printf(" Dropped.\n");
       return false;
     }
 
-    printf("Packaged passed.\n");
+    printf(" Passed.\n");
   } else {
     printf("Package skipped.\n");
   }

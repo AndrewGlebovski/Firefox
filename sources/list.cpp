@@ -192,7 +192,7 @@ bool Rule::Match(const char* package) const {
     }
   }
 
-  offset += sizeof(ip_hdr) + ip_hdr->ihl;
+  offset += ip_hdr->ihl << 2;
 
   if (ip_hdr->protocol == int(Protocol::TCP)) {
     auto tcp_hdr = reinterpret_cast<const tcphdr*>(package + offset);
